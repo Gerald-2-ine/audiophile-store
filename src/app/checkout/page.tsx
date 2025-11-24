@@ -7,8 +7,6 @@ import { useCart } from "../../contexts/CartContext";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
-
-
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, shipping, vat, grandTotal, clearCart } = useCart();
@@ -447,97 +445,97 @@ export default function CheckoutPage() {
                 </div>
               )}
             </div>
-          </form>
 
-          {/* Order Summary */}
-          <div className="bg-white rounded-lg p-6 md:p-8 h-fit">
-            <h2 className="text-lg font-bold mb-8 uppercase tracking-wider">
-              Summary
-            </h2>
+            {/* Order Summary */}
+            <div className="bg-white rounded-lg p-6 md:p-8 h-fit">
+              <h2 className="text-lg font-bold mb-8 uppercase tracking-wider">
+                Summary
+              </h2>
 
-            <div className="space-y-6 mb-8">
-              { items.map((item) => {
-                // ✅ Ensure image is always a valid string
-                const imageSrc =
-                  typeof item.image === "string"
-                    ? item.image || "/assets/shared/placeholder.png"
-                    : item.image?.mobile ||
-                      item.image?.tablet ||
-                      item.image?.desktop ||
-                      "/assets/shared/placeholder.png";
+              <div className="space-y-6 mb-8">
+                {items.map((item) => {
+                  // ✅ Ensure image is always a valid string
+                  const imageSrc =
+                    typeof item.image === "string"
+                      ? item.image || "/assets/shared/placeholder.png"
+                      : item.image?.mobile ||
+                        item.image?.tablet ||
+                        item.image?.desktop ||
+                        "/assets/shared/placeholder.png";
 
-                return (
-                  <div key={item.id} className="flex items-center gap-4">
-                    {/* ✅ Image Wrapper */}
-                    <div className="w-16 h-16 bg-[#F1F1F1] rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={imageSrc}
-                        alt={item.name}
-                        width={64}
-                        height={64}
-                        className="object-cover"
-                      />
-                    </div>
+                  return (
+                    <div key={item.id} className="flex items-center gap-4">
+                      {/* ✅ Image Wrapper */}
+                      <div className="w-16 h-16 bg-[#F1F1F1] rounded-lg overflow-hidden flex-shrink-0">
+                        <Image
+                          src={imageSrc}
+                          alt={item.name}
+                          width={64}
+                          height={64}
+                          className="object-cover"
+                        />
+                      </div>
 
-                    {/* ✅ Item info */}
-                    <div className="flex-1">
-                      <p className="font-bold text-[15px]">{item.name}</p>
-                      <p className="text-black/50 text-sm font-bold">
-                        $ {item.price.toLocaleString()}
+                      {/* ✅ Item info */}
+                      <div className="flex-1">
+                        <p className="font-bold text-[15px]">{item.name}</p>
+                        <p className="text-black/50 text-sm font-bold">
+                          $ {item.price.toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* ✅ Quantity */}
+                      <p className="text-black/50 font-bold text-[15px]">
+                        x{item.quantity}
                       </p>
                     </div>
+                  );
+                })}
+              </div>
 
-                    {/* ✅ Quantity */}
-                    <p className="text-black/50 font-bold text-[15px]">
-                      x{item.quantity}
-                    </p>
-                  </div>
-                );
-              })}
+              <div className="space-y-2 mb-8">
+                <div className="flex justify-between">
+                  <span className="text-black/50 text-[15px] uppercase">
+                    Total
+                  </span>
+                  <span className="font-bold text-lg">
+                    $ {subtotal.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-black/50 text-[15px] uppercase">
+                    Shipping
+                  </span>
+                  <span className="font-bold text-lg">$ {shipping}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-black/50 text-[15px] uppercase">
+                    VAT (Included)
+                  </span>
+                  <span className="font-bold text-lg">
+                    $ {Math.round(vat).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-4">
+                  <span className="text-black/50 text-[15px] uppercase">
+                    Grand Total
+                  </span>
+                  <span className="font-bold text-[#D87D4A] text-lg">
+                    $ {grandTotal.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                onClick={handleSubmitOrder}
+                disabled={isSubmitting || items.length === 0}
+                className="w-full bg-[#D87D4A] hover:bg-[#FBAF85] text-white py-4 rounded font-bold uppercase text-[13px] tracking-wider disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                {isSubmitting ? "Processing..." : "Continue & Pay"}
+              </button>
             </div>
-
-            <div className="space-y-2 mb-8">
-              <div className="flex justify-between">
-                <span className="text-black/50 text-[15px] uppercase">
-                  Total
-                </span>
-                <span className="font-bold text-lg">
-                  $ {subtotal.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-black/50 text-[15px] uppercase">
-                  Shipping
-                </span>
-                <span className="font-bold text-lg">$ {shipping}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-black/50 text-[15px] uppercase">
-                  VAT (Included)
-                </span>
-                <span className="font-bold text-lg">
-                  $ {Math.round(vat).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between pt-4">
-                <span className="text-black/50 text-[15px] uppercase">
-                  Grand Total
-                </span>
-                <span className="font-bold text-[#D87D4A] text-lg">
-                  $ {grandTotal.toLocaleString()}
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              onClick={handleSubmitOrder}
-              disabled={isSubmitting || items.length === 0}
-              className="w-full bg-[#D87D4A] hover:bg-[#FBAF85] text-white py-4 rounded font-bold uppercase text-[13px] tracking-wider disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              {isSubmitting ? "Processing..." : "Continue & Pay"}
-            </button>
-          </div>
+          </form>
         </div>
       </div>
     </main>
