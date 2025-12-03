@@ -40,13 +40,21 @@ interface Order {
 export default function ConfirmationPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const orderNumber = searchParams.get("order");
   const [showAllItems, setShowAllItems] = useState(false);
 
+  const isClient = typeof window !== "undefined";
+  const orderNumber = searchParams.get("order");
+
+  // ALWAYS call hooks in the same order
   const order = useQuery(
     api.orders.getOrderByNumber,
-    orderNumber ? { orderNumber } : "skip"
+    isClient && orderNumber ? { orderNumber } : "skip"
   ) as Order | null | undefined;
+
+  // SAFE client-side early return
+  if (!isClient) {
+    return <div className="min-h-screen bg-[#F1F1F1]"></div>;
+  }
 
   if (!orderNumber) {
     return (
@@ -69,6 +77,7 @@ export default function ConfirmationPage() {
       </div>
     );
   }
+
 
   if (!order) {
     return (
